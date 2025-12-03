@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心率健康AI评估</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 450px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 20px;
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .input-item {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-size: 15px;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+        input {
+            width: 100%;
+            height: 48px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0 15px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            height: 50px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:active {
+            background-color: #1d4ed8;
+        }
+        .advice-box {
+            margin-top: 25px;
+            padding: 18px;
+            border-radius: 10px;
+            background-color: #e0f2fe;
+            display: none;
+        }
+        .advice-box h3 {
+            font-size: 16px;
+            color: #1e40af;
+            margin-bottom: 10px;
+        }
+        .advice-box p {
+            font-size: 15px;
+            color: #374151;
+            line-height: 1.7;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>心率健康AI评估工具</h1>
+    <div class="input-item">
+        <label for="ageInput">您的年龄</label>
+        <input type="number" id="ageInput" placeholder="请输入1-120之间的年龄" min="1" max="120">
+    </div>
+    <div class="input-item">
+        <label for="hrInput">静息心率（次/分钟）</label>
+        <input type="number" id="hrInput" placeholder="请输入40-200之间的心率" min="40" max="200">
+    </div>
+    <button onclick="generateAdvice()">获取AI健康建议</button>
+    <div class="advice-box" id="adviceContainer">
+        <h3>专属健康建议</h3>
+        <p id="adviceContent"></p >
+    </div>
+</div>
+
+<script>
+    function generateAdvice() {
+        const age = Number(document.getElementById("ageInput").value);
+        const heartRate = Number(document.getElementById("hrInput").value);
+        const adviceContainer = document.getElementById("adviceContainer");
+        const adviceContent = document.getElementById("adviceContent");
+
+        // 输入验证
+        if (isNaN(age) || isNaN(heartRate) || age < 1 || age > 120 || heartRate < 40 || heartRate > 200) {
+            alert("请输入有效的年龄和心率数值！");
+            return;
+        }
+
+        // 按年龄段划分正常心率范围并生成AI建议
+        let normalMin, normalMax, coreAdvice, dailyTip;
+        if (age < 18) {
+            normalMin = 60;
+            normalMax = 100;
+        } else if (age >= 18 && age <= 64) {
+            normalMin = 60;
+            normalMax = 80;
+        } else {
+            normalMin = 60;
+            normalMax = 90;
+        }
+
+        if (heartRate >= normalMin && heartRate <= normalMax) {
+            coreAdvice = `您的静息心率(${heartRate}次/分)处于${normalMin}-${normalMax}次/分的正常区间，心血管基础状态良好。`;
+            dailyTip = "日常维护建议：保持规律作息，每周3-5次中等强度运动（如快走、游泳），减少高盐高脂饮食，戒烟限酒，维持当前健康状态即可。";
+        } else if (heartRate < normalMin) {
+            coreAdvice = `您的静息心率(${heartRate}次/分)低于${normalMin}次/分的正常下限，可能存在两种情况。`;
+            dailyTip = "日常维护建议：若为长期运动的运动员，属于生理性心动过缓，无需担忧；若伴随头晕、乏力、黑朦等症状，建议及时就医排查心脏传导系统问题，避免剧烈运动时出现供血不足。";
+        } else {
+            coreAdvice = `您的静息心率(${heartRate}次/分)高于${normalMax}次/分的正常上限，心血管负荷略高。`;
+            dailyTip = "日常维护建议：减少熬夜和咖啡因、浓茶摄入，避免情绪剧烈波动，可先通过1-2周规律作息观察心率变化；若持续偏高或伴随胸闷、心慌，建议做心电图、动态心电监测等检查，排查心律失常等潜在问题。";
+        }
+
+        // 展示建议
+        adviceContent.innerText = `${coreAdvice}\n\n${dailyTip}`;
+        adviceContainer.style.display = "block";
+        adviceContainer.scrollIntoView({behavior: "smooth"});
+    }
+</script>
+</body>
+</html>
